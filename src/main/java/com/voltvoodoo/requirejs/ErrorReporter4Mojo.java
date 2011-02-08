@@ -1,4 +1,4 @@
-package net_alchim31_maven_yuicompressor;
+package com.voltvoodoo.requirejs;
 
 import org.apache.maven.plugin.logging.Log;
 import org.mozilla.javascript.ErrorReporter;
@@ -12,6 +12,10 @@ public class ErrorReporter4Mojo implements ErrorReporter {
     private int warningCnt_;
     private int errorCnt_;
 
+    public ErrorReporter4Mojo(Log log) {
+        this(log, true);
+    }
+    
     public ErrorReporter4Mojo(Log log, boolean jswarn) {
         log_ = log;
         acceptWarn_ = jswarn;

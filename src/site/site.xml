@@ -15,7 +15,6 @@
   <body>
     <links>
       <item name="changelog/scm" href="http://github.com/davidB/yuicompressor-maven-plugin/"/>
-      <!--item name="sourceforge" href="http://sf.net/projects/alchim" /-->
     </links>
 
     <menu name="Overview">

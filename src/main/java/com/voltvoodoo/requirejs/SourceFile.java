@@ -1,4 +1,4 @@
-package net_alchim31_maven_yuicompressor;
+package com.voltvoodoo.requirejs;
 
 import java.io.File;
 
