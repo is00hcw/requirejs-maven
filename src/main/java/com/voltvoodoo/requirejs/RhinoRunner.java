@@ -41,6 +41,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 import org.codehaus.plexus.util.IOUtil;
 import org.mozilla.javascript.Context;
@@ -62,121 +63,59 @@ import org.mozilla.javascript.WrappedException;
  * @based http://lxr.mozilla.org/mozilla/source/js/rhino/examples/BasicRhinoShell.java
  *        (2007-08-30)
  */
-@SuppressWarnings("serial")
-public class BasicRhinoShell extends ScriptableObject {
+public class RhinoRunner extends ScriptableObject {
+
+    private static final long serialVersionUID = 3859222870741981547L;
 
     @Override
     public String getClassName() {
         return "global";
     }
 
-    /**
-     * Main entry point.
-     *
-     * Process arguments as would a normal Java program. Also create a new
-     * Context and associate it with the current thread. Then set up the
-     * execution environment and begin to execute scripts.
-     */
-    public static void exec(String args[], ErrorReporter reporter) {
+    public static void exec(String includes[], String mainScript, Object[] args, Map<String, Object> globalVariables, ErrorReporter reporter) {
         // Associate a new Context with this thread
         Context cx = Context.enter();
         cx.setErrorReporter(reporter);
         try {
             // Initialize the standard objects (Object, Function, etc.)
             // This must be done before scripts can be executed.
-            BasicRhinoShell BasicRhinoShell = new BasicRhinoShell();
-            cx.initStandardObjects(BasicRhinoShell);
+            RhinoRunner runner = new RhinoRunner();
+            cx.initStandardObjects(runner);
 
             // Define some global functions particular to the BasicRhinoShell.
             // Note
             // that these functions are not part of ECMA.
-            String[] names = { "print", "quit", "version", "load", "help", "readFile", "warn" };
-            BasicRhinoShell.defineFunctionProperties(names, BasicRhinoShell.class, ScriptableObject.DONTENUM);
+            String[] names = { "print", "load", "readFile", "warn" };
+            runner.defineFunctionProperties(names, RhinoRunner.class, ScriptableObject.DONTENUM);
 
-            args = processOptions(cx, args);
-
+            for(String include : includes) {
+                runner.processSource(cx, include);
+            }
+            
             // Set up "arguments" in the global scope to contain the command
             // line arguments after the name of the script to execute
             Object[] array;
             if (args.length == 0) {
                 array = new Object[0];
             } else {
-                int length = args.length - 1;
+                int length = args.length;
                 array = new Object[length];
-                System.arraycopy(args, 1, array, 0, length);
+                System.arraycopy(args, 0, array, 0, length);
             }
-            Scriptable argsObj = cx.newArray(BasicRhinoShell, array);
-            BasicRhinoShell.defineProperty("arguments", argsObj, ScriptableObject.DONTENUM);
-
-            BasicRhinoShell.processSource(cx, args.length == 0 ? null : args[0]);
+            Scriptable argsObj = cx.newArray(runner, array);
+            
+            runner.defineProperty("arguments", argsObj, ScriptableObject.DONTENUM);
+            
+            for(String key : globalVariables.keySet()) {
+                runner.defineProperty(key, globalVariables.get( key ), ScriptableObject.DONTENUM);
+            }
+            
+            runner.processSource(cx, mainScript);
         } finally {
             Context.exit();
         }
     }
-
-    /**
-     * Parse arguments.
-     */
-    public static String[] processOptions(Context cx, String args[]) {
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (!arg.startsWith("-")) {
-                String[] result = new String[args.length - i];
-                for (int j = i; j < args.length; j++) {
-                    result[j - i] = args[j];
-                }
-                return result;
-            }
-            if (arg.equals("-version")) {
-                if (++i == args.length) {
-                    usage(arg);
-                }
-                double d = Context.toNumber(args[i]);
-                if (d != d) {
-                    usage(arg);
-                }
-                cx.setLanguageVersion((int) d);
-                continue;
-            }
-            usage(arg);
-        }
-        return new String[0];
-    }
-
-    /**
-     * Print a usage message.
-     */
-    private static void usage(String s) {
-        p("Didn't understand \"" + s + "\".");
-        p("Valid arguments are:");
-        p("-version 100|110|120|130|140|150|160|170");
-        System.exit(1);
-    }
-
-    /**
-     * Print a help message.
-     *
-     * This method is defined as a JavaScript function.
-     */
-    public void help() {
-        p("");
-        p("Command                Description");
-        p("=======                ===========");
-        p("help()                 Display usage and help messages. ");
-        p("defineClass(className) Define an extension using the Java class");
-        p("                       named with the string argument. ");
-        p("                       Uses ScriptableObject.defineClass(). ");
-        p("load(['foo.js', ...])  Load JavaScript source files named by ");
-        p("                       string arguments. ");
-        p("loadClass(className)   Load a class named by a string argument.");
-        p("                       The class must be a script compiled to a");
-        p("                       class file. ");
-        p("print([expr ...])      Evaluate and print expressions. ");
-        p("quit()                 Quit the BasicRhinoShell. ");
-        p("version([number])      Get or set the JavaScript version number.");
-        p("");
-    }
-
+    
     /**
      * Print the string values of its arguments.
      *
@@ -197,17 +136,6 @@ public class BasicRhinoShell extends ScriptableObject {
             System.out.print(s);
         }
         System.out.println();
-    }
-
-    /**
-     * Quit the BasicRhinoShell.
-     *
-     * This only affects the interactive mode.
-     *
-     * This method is defined as a JavaScript function.
-     */
-    public void quit() {
-        quitting = true;
     }
 
     public static void warn(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
@@ -232,27 +160,13 @@ public class BasicRhinoShell extends ScriptableObject {
     }
 
     /**
-     * Get and set the language version.
-     *
-     * This method is defined as a JavaScript function.
-     */
-    public static double version(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
-        double result = cx.getLanguageVersion();
-        if (args.length > 0) {
-            double d = Context.toNumber(args[0]);
-            cx.setLanguageVersion((int) d);
-        }
-        return result;
-    }
-
-    /**
      * Load and execute a set of JavaScript source files.
      *
      * This method is defined as a JavaScript function.
      *
      */
     public static void load(Context cx, Scriptable thisObj, Object[] args, Function funObj) {
-        BasicRhinoShell BasicRhinoShell = (BasicRhinoShell) getTopLevelScope(thisObj);
+        RhinoRunner BasicRhinoShell = (RhinoRunner) getTopLevelScope(thisObj);
         for (Object element : args) {
             BasicRhinoShell.processSource(cx, Context.toString(element));
         }
@@ -315,19 +229,28 @@ public class BasicRhinoShell extends ScriptableObject {
                 } catch (IOException ioe) {
                     System.err.println(ioe.toString());
                 }
-                if (quitting) {
-                    // The user executed the quit() function.
-                    break;
-                }
             } while (!hitEOF);
             System.err.println();
         } else {
-            FileReader in = null;
+            InputStreamReader in = null;
             try {
                 in = new FileReader(filename);
             } catch (FileNotFoundException ex) {
-                Context.reportError("Couldn't open file \"" + filename + "\".");
-                return;
+                try {
+                    if(filename.startsWith( "." )) {
+                        filename = filename.substring( 1 );
+                    }
+                    
+                    if(!filename.startsWith( "/" )) {
+                        filename = "/" + filename;
+                    }
+                    
+                    System.out.println(filename + "!!!");
+                    in = new InputStreamReader(getClass().getResourceAsStream( filename ));
+                } catch( Exception e ) {
+                    Context.reportError("Couldn't open file \"" + filename + "\".");
+                    return;
+                }
             }
 
             try {
@@ -353,10 +276,4 @@ public class BasicRhinoShell extends ScriptableObject {
             }
         }
     }
-
-    private static void p(String s) {
-        System.out.println(s);
-    }
-
-    private boolean quitting;
 }

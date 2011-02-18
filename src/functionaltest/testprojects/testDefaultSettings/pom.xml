@@ -54,7 +54,7 @@
 				<executions>
 					<execution>
 						<goals>
-							<goal>optimize</goal>
+							<goal>build</goal>
 						</goals>
 					</execution>
 				</executions>

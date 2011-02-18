@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class ResourcesTest  {
 
-    private static final String OUTPUT_FILE = "main-built.js";
+    private static final String OUTPUT_FILE = "main.js";
     private static String[] FILE_IDENTIFIERS = new String[] {"one.js","two.js","three.js"};
     
     private File output = new File("target/classes");
@@ -48,10 +48,10 @@ public class ResourcesTest  {
     }
     
     private static void assertContains(File file, String substr) throws IOException {
-        assertThat(FileUtils.readFileToString( file ), (containsString( "//" )));
+        assertThat(FileUtils.readFileToString( file ), (containsString( substr )));
     }
     
     private static void assertNotContains(File file, String substr) throws IOException {
-        assertThat(FileUtils.readFileToString( file ), not(containsString( "//" )));
+        assertThat(FileUtils.readFileToString( file ), not(containsString( substr )));
     }
 }
