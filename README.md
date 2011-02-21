@@ -8,27 +8,27 @@ to aggregate and minify your require js projects.
 Requirejs-maven is not yet in maven central, so for now you have to install
 it manually:
 
-  git clone git://github.com/jakewins/requirejs-maven.git
-  cd requirejs-maven
-  mvn clean install
+    git clone git://github.com/jakewins/requirejs-maven.git
+    cd requirejs-maven
+    mvn clean install
 
 Than, add the plugin to your pom:
 
-  <plugins> 
-    ..
-    <plugin>
-      <groupId>com.voltvoodoo</groupId>
-      <artifactId>requirejs-maven</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <executions>
-        <execution>
-          <goals>
-            <goal>build</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
-  </plugins>
+    <plugins> 
+      ..
+      <plugin>
+        <groupId>com.voltvoodoo</groupId>
+        <artifactId>requirejs-maven</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
 
 ### Goals
 
@@ -49,15 +49,15 @@ You can change the module name from the default ("main") by setting the
 
 Minimum settings for the "modules" property would be:
 
-  <configuration>
-    ..
-    <modules>
-      <module>
-        <name>myapp</name> <!-- Will lead to looking for a file named "myapp.js" -->
-      </module>
+    <configuration>
       ..
-    </modules>
-  </configuration>
+      <modules>
+        <module>
+          <name>myapp</name> <!-- Will lead to looking for a file named "myapp.js" -->
+        </module>
+        ..
+      </modules>
+    </configuration>
 
 Requirejs-maven supports almost all settings that the requirejs optimization
 tool does. Unfortunately, these are currently not documented properely.
