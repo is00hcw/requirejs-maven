@@ -1,0 +1,9 @@
+Requirejs-maven
+Copyright (c) 2002-2011 Jacob Hansson <jacob@voltvoodoo.com>
+
+Requirejs-maven is released under the LGPL. See LICENSE.txt.
+
+Third party libraries
+---------------------
+
+Require.js is licensed under the MIT or the new BSD license. See LICENSES.txt.

@@ -1,0 +1,50 @@
+<document>
+	<properties>
+		<author email="jacob@voltvoodoo.com">Jacob Hansson</author>
+	</properties>
+	<body>
+		<section name="Usage">
+
+			<subsection name="Without pom.xml change">
+				<p>
+					To build require.js module src/main/javascript/myapp.js :
+					<source><![CDATA[
+ $> mvn com.voltvoodoo.requirejs-maven:build -Drequirejs.module="myapp"
+ ]]></source>
+				</p>
+			</subsection>
+
+			<subsection name="With pom.xml change">
+				<p>
+					To build require.js module src/main/javascript/myapp.js :
+					<source><![CDATA[
+<project>
+...
+  <build>
+    <plugins>
+...
+      <plugin>
+        <groupId>com.voltvoodoo</groupId>
+        <artifactId>requirejs-maven</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>build</goal>
+            </goals>
+          </execution>
+        </executions> 
+        <configuration>
+          <module>myapp</module>
+        </configuration>
+      </plugin>
+...
+    </plugins>
+  </build>
+...
+</project>
+ ]]></source>
+				</p>
+			</subsection>
+		</section>
+	</body>
+</document>

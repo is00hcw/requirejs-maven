@@ -12,7 +12,7 @@ it manually:
     cd requirejs-maven
     mvn clean install
 
-Than, add the plugin to your pom:
+Then, add the plugin to your pom:
 
     <plugins> 
       ..

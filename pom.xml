@@ -25,6 +25,7 @@
 		<maven.version>2.2.1</maven.version>
 		<maven.compiler.source>1.5</maven.compiler.source>
 		<maven.compiler.target>1.5</maven.compiler.target>
+   		<short-name>requirejs-maven</short-name>
 		
 		<git.repo>git@github.com:jakewins/requirejs-maven.git</git.repo>
 		<git.url>github.com/jakewins/requirejs-maven</git.url>
