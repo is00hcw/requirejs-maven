@@ -246,17 +246,5 @@ public class RequireJsMojo extends AbstractMojo {
         return profileFile;
     }
 
-//    private File getMainFile() throws MojoFailureException {
-//        DirectoryScanner scanner = new DirectoryScanner();
-//        scanner.setBasedir(sourceDirectory);
-//        scanner.setIncludes(new String[] {appName + ".js"});
-//        scanner.scan();
-//        
-//        for(String relativePath :scanner.getIncludedFiles() ) {
-//            return new File(sourceDirectory, relativePath);
-//        }
-//        
-//        throw new MojoFailureException("Unable to find application starting point. Given the appname '" + appName + "', looking for a file named '" + appName + ".js' in '" + sourceDirectory.getAbsolutePath() + "', but could not find it.");
-//    }
     
 }

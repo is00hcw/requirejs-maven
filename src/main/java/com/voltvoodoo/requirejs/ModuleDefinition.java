@@ -4,8 +4,6 @@ import java.util.List;
 
 public class ModuleDefinition
 {
-
-
     /**
      * @parameter
      * @required
