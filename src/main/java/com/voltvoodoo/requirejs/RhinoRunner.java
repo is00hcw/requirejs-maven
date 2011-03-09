@@ -245,7 +245,6 @@ public class RhinoRunner extends ScriptableObject {
                         filename = "/" + filename;
                     }
                     
-                    System.out.println(filename + "!!!");
                     in = new InputStreamReader(getClass().getResourceAsStream( filename ));
                 } catch( Exception e ) {
                     Context.reportError("Couldn't open file \"" + filename + "\".");
